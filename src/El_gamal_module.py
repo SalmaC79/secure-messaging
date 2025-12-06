@@ -25,12 +25,15 @@ def generate_keypair(bits=2048):
 
 
 def save_keys(prefix, public, private):
+    # Convertir tous les nombres en int standard avant JSON
+    public_json = {k: int(v) for k, v in public.items()}
+    private_json = {k: int(v) for k, v in private.items()}
 
     with open(f"{prefix}_public.json", "w") as f:
-        json.dump(public, f)
+        json.dump(public_json, f)
 
     with open(f"{prefix}_private.json", "w") as f:
-        json.dump(private, f)
+        json.dump(private_json, f)
 
 
 def load_keys(prefix):

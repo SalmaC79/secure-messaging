@@ -1,4 +1,9 @@
-from src.El_gamal_module import generate_keypair, save_keys, load_keys, encrypt_aes_key, decrypt_aes_key
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+
+from El_gamal_module import generate_keypair, save_keys, load_keys, encrypt_aes_key, decrypt_aes_key
 from Crypto.Random import get_random_bytes
 
 def main():
