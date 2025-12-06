@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## Overview
 
 This module provides AES-256 GCM encryption and decryption for messages and files, with authenticated encryption and JSON serialization.
@@ -136,3 +137,6 @@ print("Decrypted message:", plaintext.decode())
 * The AES key comes from the **ElGamal key exchange** managed by Member 1.
 * Can be used for **messages or files**.
 ---
+=======
+# secure-messaging
+>>>>>>> ed2b204da22b3bf54f83db6fdbcb5afabf7c9fe2
