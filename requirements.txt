@@ -1,1 +1,3 @@
-pip install pycryptodome
+pycryptodome
+hashlib 
+#lli bgha y installi hadchi kaml, y runni had la commande : pip install -r requirements.txt
