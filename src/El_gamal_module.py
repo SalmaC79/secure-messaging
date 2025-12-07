@@ -44,8 +44,10 @@ def load_keys(prefix):
     with open(f"{prefix}_private.json", "r") as f:
         priv = json.load(f)
 
-    return pub, priv
+    pub = {k: int(v) for k, v in pub.items()}
+    priv = {k: int(v) for k, v in priv.items()}
 
+    return pub, priv
 
 def encrypt_aes_key(aes_key_bytes, public):
 

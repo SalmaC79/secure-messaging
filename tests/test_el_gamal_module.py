@@ -8,7 +8,7 @@ from Crypto.Random import get_random_bytes
 
 def main():
     # 1️⃣ Génération des clés ElGamal
-    public, private = generate_keypair(bits=1024)  # 1024 bits suffisent pour le test
+    public, private = generate_keypair(bits=512)  # 1024 bits suffisent pour le test
     save_keys("testuser", public, private)
 
     # 2️⃣ Charger les clés (simule l'utilisation après sauvegarde)
