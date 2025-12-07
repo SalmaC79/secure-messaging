@@ -4,7 +4,7 @@ from Crypto.Util.number import bytes_to_long, long_to_bytes
 import json
 import hashlib
 
-def generate_keypair(bits=2048):
+def generate_keypair(bits=256):
 
     key = ElGamal.generate(bits, Random.get_random_bytes)
 

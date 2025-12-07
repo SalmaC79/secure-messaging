@@ -1,3 +1,4 @@
 pycryptodome
 hashlib 
+Cryptodome
 #lli bgha y installi hadchi kaml, y runni had la commande : pip install -r requirements.txt
