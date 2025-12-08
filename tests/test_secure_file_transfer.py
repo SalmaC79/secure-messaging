@@ -1,5 +1,11 @@
 import unittest
-import os
+import os,sys
+
+BASE_DIR = os.path.dirname(__file__)       # /project/tests
+SRC_PATH = os.path.abspath(os.path.join(BASE_DIR, ".."))  # /project
+
+sys.path.append(SRC_PATH)
+
 from src.aes_module import generate_aes_key
 from src.secure_file_transfer import envoyer_fichier_secure, recevoir_fichier_secure
 
