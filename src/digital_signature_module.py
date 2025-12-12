@@ -2,7 +2,7 @@ import os
 import math
 # BASE_DIR = os.path.dirname(__file__)       # /project/tests
 # SRC_PATH = os.path.abspath(os.path.join(BASE_DIR, ".."))  # /project
-from src.hash_module import hash_message, hash_file
+from hash_module import hash_message, hash_file
 from Crypto.PublicKey import ElGamal
 from Crypto.Random.random import randint
 

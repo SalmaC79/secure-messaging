@@ -1,5 +1,5 @@
 import base64,os,sys
-from src.file_module import encrypt_file, decrypt_file, save_encrypted_file, load_encrypted_file
+from file_module import encrypt_file, decrypt_file, save_encrypted_file, load_encrypted_file
 # from src.digital_signature_module import sign, verify
 BASE_DIR = os.path.dirname(__file__)       # /project/tests
 SRC_PATH = os.path.abspath(os.path.join(BASE_DIR, ".."))  # /project
