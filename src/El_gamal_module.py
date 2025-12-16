@@ -105,10 +105,7 @@ def encrypt_aes_key(aes_key_bytes, public):
     g = int(public["g"])
     y = int(public["y"])
 
-    if m >= p:
-        raise ValueError("❌ AES key too large for ElGamal modulus")
-
-    k = Random.random.StrongRandom().randint(1, p - 2)
+    k = Random.StrongRandom().randint(1, p - 2)
 
     a = pow(g, k, p)
     b = (pow(y, k, p) * m) % p
