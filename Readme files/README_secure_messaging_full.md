@@ -1,87 +1,78 @@
-
----
-
 # Secure Messaging Module
 
-This module provides two high-level functions for secure message encryption and decryption using your existing cryptographic modules:
+This module provides high-level functions for **securely sending and receiving messages or files** using your cryptographic modules:
 
-* **AES-GCM** (from `aes_module.py`)
-* **ElGamal key encryption** (from `El_gamal_module.py`)
-* **SHA-256 hashing** (from `hash_module.py`)
+* **AES-GCM** for symmetric encryption (`aes_module.py`)
+* **ElGamal** for AES key encryption (`El_gamal_module.py`)
+* **Digital signatures** for authenticity (`digital_signature_module.py`)
 
-The goal is to offer a simple interface for securely sending and receiving encrypted messages.
+The module **encrypts, signs, decrypts, and verifies** messages or files in a simple and unified way.
 
 ---
 
 ## Functions
 
-### `secure_encrypt(message, receiver_public_key)`
+### `secure_encrypt(data, aes_key, sender_private_key, receiver_public_key, data_type="message")`
 
-Encrypts a plaintext message.
+Encrypts and signs a message or a file.
 
-* Generates a random AES key
-* Hashes the message (SHA-256)
-* Encrypts the message using AES-GCM
-* Encrypts the AES key using ElGamal
-* Returns a dictionary containing:
+**Parameters:**
 
-  * ciphertext (hex)
-  * nonce (hex)
-  * tag (hex)
-  * encrypted AES key
-  * message hash
+* `data` — message string or file path
+* `aes_key` — AES key to use for encryption
+* `sender_private_key` — sender’s ElGamal private key (used for signing)
+* `receiver_public_key` — receiver’s ElGamal public key (used to encrypt AES key)
+* `data_type` — `"message"` or `"file"` (default: `"message"`)
 
-#### Example:
+**Process:**
 
-```python
-package = secure_encrypt("Hello", receiver_public_key)
-```
+1. Converts `data` to bytes
+2. Encrypts the data using **AES-GCM**
+3. Encrypts the AES key using **ElGamal public key**
+4. Signs the original data using **ElGamal private key**
+5. Returns a dictionary containing:
 
----
-
-### `secure_decrypt(package, receiver_private_key)`
-
-Decrypts the package produced by `secure_encrypt`.
-
-* Decrypts the AES key (ElGamal)
-* Converts hex values back to bytes
-* Decrypts AES-GCM ciphertext
-* Verifies integrity using SHA-256
-
-#### Example:
-
-```python
-plaintext = secure_decrypt(package, receiver_private_key)
-```
+   * `ciphertext` — encrypted data (hex)
+   * `nonce` — AES-GCM nonce (hex)
+   * `tag` — AES-GCM authentication tag (hex)
+   * `aes_key_enc` — AES key encrypted with ElGamal
+   * `signature` — digital signature
+   * `data_type` — type of data (`"message"` or `"file"`)
 
 ---
 
-## Demo
+### `secure_decrypt(package, receiver_private_key, sender_public_key)`
 
-Running the file directly executes a demo showing:
+Decrypts a package created by `secure_encrypt` and verifies its authenticity.
 
-* Key generation
-* Encryption
-* Decryption
-* Message integrity check
+**Parameters:**
 
-Run:
+* `package` — dictionary returned by `secure_encrypt`
+* `receiver_private_key` — receiver’s ElGamal private key
+* `sender_public_key` — sender’s ElGamal public key (for signature verification)
 
-```bash
-python secure_messaging_full.py
-```
+**Process:**
 
----
+1. Decrypts the AES key using the **receiver’s private key**
+2. Converts hex fields (`ciphertext`, `nonce`, `tag`) back to bytes
+3. Decrypts the AES-GCM ciphertext
+4. Restores data as a string (message) or bytes (file)
+5. Verifies the digital signature
+6. Returns a tuple:
 
-## Requirements
-
-This module depends on your own cryptographic modules:
-
-* `aes_module.py`
-* `El_gamal_module.py`
-* `hash_module.py`
-
-These must be present in the same project.
+   * `data` — decrypted message or file bytes
+   * `valid` — `True` if signature is valid, otherwise `False`
 
 ---
 
+## Dependencies
+
+This module depends on the following project modules:
+
+* `aes_module.py` — AES-GCM encryption/decryption
+* `El_gamal_module.py` — ElGamal key generation, encryption, decryption
+* `digital_signature_module.py` — Signing and verification
+
+All modules must be present in the same project.
+
+---
