@@ -1,6 +1,6 @@
 import base64
 import json
-from src.aes_module import encrypt_message, decrypt_message
+from aes_module import encrypt_message, decrypt_message
 
 def encrypt_file(aes_key: bytes, infile_path: str, chunk_size: int = 1024 * 1024) -> dict:
     """

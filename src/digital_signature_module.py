@@ -29,9 +29,9 @@ def sign(data, private_key, data_type=None, algorithm="SHA-256"):
     digest_int = int(digest, 16)
 
     # ElGamal parameters (cast to int!)
-    p = int(private_key.p)
-    g = int(private_key.g)
-    x = int(private_key.x)
+    p = int(private_key["p"])
+    g = int(private_key["g"])
+    x = int(private_key["x"])
 
     # Generate k coprime with p−1
     while True:
@@ -78,9 +78,9 @@ def verify(data, signature, public_key, data_type=None):
     s = signature["s"]
 
     # --- Public key components ---
-    p = int(public_key.p)
-    g = int(public_key.g)
-    y = int(public_key.y)
+    p = int(public_key["p"])
+    g = int(public_key["g"])
+    y = int(public_key["y"])
 
     # --- ElGamal verification ---
     if not (1 < r < p):

@@ -13,11 +13,11 @@ class DecryptionError(Exception):
 # ----------------------
 # AES Key Generation
 # ----------------------
-def generate_aes_key() -> bytes:
+def generate_aes_key(bits: int = 256) -> bytes:
     """
     Generate a 256-bit AES key (32 bytes)
     """
-    return get_random_bytes(32)
+    return get_random_bytes(bits // 8)
 
 # ----------------------
 # AES-GCM Encryption

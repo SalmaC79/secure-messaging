@@ -1,17 +1,12 @@
-import base64,os,sys
+import os,sys
 from file_module import encrypt_file, decrypt_file, save_encrypted_file, load_encrypted_file
-# from src.digital_signature_module import sign, verify
-BASE_DIR = os.path.dirname(__file__)       # /project/tests
-SRC_PATH = os.path.abspath(os.path.join(BASE_DIR, ".."))  # /project
 
-sys.path.append(SRC_PATH)
-
-from src.digital_signature_module import sign, verify
+from digital_signature_module import sign, verify
 
 # ----------------------
 # Envoi d'un fichier sécurisé
 # ----------------------
-def envoyer_fichier_secure(aes_key, infile_path, sender_private_key, receiver_public_key):
+def envoyer_fichier_secure(infile_path, aes_key, sender_private_key):
     """
     Chiffre un fichier avec AES et signe le hash.
     Retourne un paquet dict {fichier_chiffre, signature}

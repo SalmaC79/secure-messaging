@@ -1,8 +1,24 @@
 from Crypto.PublicKey import ElGamal
 from Crypto import Random
+from Crypto.Random import random
 from Crypto.Util.number import bytes_to_long, long_to_bytes
 import json
 import os
+
+KEYS_DIR = "keys"
+
+
+# ---------------------------------------------------------
+# UTILITAIRE : chemin des fichiers
+# ---------------------------------------------------------
+
+def public_key_path(prefix):
+    return os.path.join(KEYS_DIR, f"{prefix}_public.json")
+
+
+def private_key_path(prefix):
+    return os.path.join(KEYS_DIR, f"{prefix}_private.json")
+
 
 # ---------------------------------------------------------
 # UTILITAIRE : vérifier si les clés existent
@@ -13,8 +29,8 @@ def keys_exist(prefix):
     Vérifie si les clés ElGamal existent déjà pour un utilisateur
     """
     return (
-        os.path.exists(f"{prefix}_public.json") and
-        os.path.exists(f"{prefix}_private.json")
+        os.path.exists(public_key_path(prefix)) and
+        os.path.exists(private_key_path(prefix))
     )
 
 
@@ -26,6 +42,8 @@ def generate_keypair(prefix, bits=256):
     """
     Génère les clés ElGamal seulement si elles n'existent pas déjà.
     """
+    os.makedirs(KEYS_DIR, exist_ok=True)
+
     if keys_exist(prefix):
         print(f"✔ Keys already exist for user '{prefix}'. Loading keys.")
         return load_keys(prefix)
@@ -58,13 +76,15 @@ def generate_keypair(prefix, bits=256):
 
 def save_keys(prefix, public, private):
     """
-    Sauvegarde les clés ElGamal en JSON
+    Sauvegarde les clés ElGamal en JSON dans le dossier 'keys'
     """
-    with open(f"{prefix}_public.json", "w") as f:
-        json.dump(public, f)
+    os.makedirs(KEYS_DIR, exist_ok=True)
 
-    with open(f"{prefix}_private.json", "w") as f:
-        json.dump(private, f)
+    with open(public_key_path(prefix), "w") as f:
+        json.dump(public, f, indent=4)
+
+    with open(private_key_path(prefix), "w") as f:
+        json.dump(private, f, indent=4)
 
 
 # ---------------------------------------------------------
@@ -73,15 +93,15 @@ def save_keys(prefix, public, private):
 
 def load_keys(prefix):
     """
-    Charge les clés ElGamal depuis les fichiers JSON
+    Charge les clés ElGamal depuis le dossier 'keys'
     """
     if not keys_exist(prefix):
         raise FileNotFoundError(f"❌ No keys found for user '{prefix}'")
 
-    with open(f"{prefix}_public.json", "r") as f:
+    with open(public_key_path(prefix), "r") as f:
         pub = json.load(f)
 
-    with open(f"{prefix}_private.json", "r") as f:
+    with open(private_key_path(prefix), "r") as f:
         priv = json.load(f)
 
     # Reconversion en int
@@ -101,11 +121,13 @@ def encrypt_aes_key(aes_key_bytes, public):
     """
     m = bytes_to_long(aes_key_bytes)
 
-    p = int(public["p"])
-    g = int(public["g"])
-    y = int(public["y"])
+    p = public["p"]
+    g = public["g"]
+    y = public["y"]
 
-    k = Random.StrongRandom().randint(1, p - 2)
+    # k = Random.StrongRandom().randint(1, p - 2)
+    k = random.randint(1, p - 2)
+
 
     a = pow(g, k, p)
     b = (pow(y, k, p) * m) % p
@@ -124,8 +146,8 @@ def decrypt_aes_key(cipher, private):
     a = int(cipher["a"])
     b = int(cipher["b"])
 
-    p = int(private["p"])
-    x = int(private["x"])
+    p = private["p"]
+    x = private["x"]
 
     s = pow(a, x, p)
     s_inv = pow(s, -1, p)

@@ -4,6 +4,7 @@ import json
 
 # Accès aux modules dans src/
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
+KEYS_DIR = "keys"
 
 from El_gamal_module import (
     generate_keypair,
@@ -14,36 +15,36 @@ from El_gamal_module import (
 
 from aes_module import (
     generate_aes_key,
-    encrypt_message,
-    decrypt_message,
-    serialize_encrypted_message,
-    deserialize_encrypted_message
 )
 
 # =========================================================
 # 1️⃣ Initialisation du Receiver (ElGamal)
 # =========================================================
 
-def receiver_setup(user_prefix="receiver"):
+def setupkeysElgamal(user_prefix):
     """
     Génère (si nécessaire) les clés ElGamal du receiver
     """
-    generate_keypair(user_prefix)
+    public, private = generate_keypair(user_prefix)
     print("✔ Receiver is ready (ElGamal keys available).")
+    return public, private
+
 
 
 # =========================================================
 # 2️⃣ Sender : génération + chiffrement de la clé AES
 # =========================================================
 
-def sender_send_session_key(receiver_prefix="receiver"):
+def sender_send_session_key(receiver_prefix):
     """
     Le sender génère une clé AES et la chiffre avec la clé publique du receiver
     """
+    os.makedirs(KEYS_DIR, exist_ok=True)
+
     public_key, _ = load_keys(receiver_prefix)
 
     aes_key = generate_aes_key()
-    print("✔ Sender generated AES session key:", aes_key.hex())
+    print("✔ Sender generated AES session key .")
 
     cipher = encrypt_aes_key(aes_key, public_key)
 
@@ -52,10 +53,10 @@ def sender_send_session_key(receiver_prefix="receiver"):
         "b": str(cipher["b"])
     }
 
-    with open("cipher_aes_key.json", "w") as f:
-        json.dump(cipher_json, f)
+    cipher_path = os.path.join(KEYS_DIR, "cipher_aes_key.json")
 
-    print("✔ Encrypted AES key sent (cipher_aes_key.json)")
+    with open(cipher_path, "w") as f:
+        json.dump(cipher_json, f, indent=4)
 
     return aes_key  # utile pour test/debug
 
@@ -63,66 +64,40 @@ def sender_send_session_key(receiver_prefix="receiver"):
 # =========================================================
 # 3️⃣ Receiver : déchiffrement et stockage de la clé AES
 # =========================================================
-
-def receiver_receive_session_key(receiver_prefix="receiver"):
+def receiver_receive_session_key(receiver_prefix):
     """
     Le receiver déchiffre la clé AES reçue et la stocke localement
     """
     _, private_key = load_keys(receiver_prefix)
 
-    with open("cipher_aes_key.json", "r") as f:
-        data = json.load(f)
+    cipher_path = os.path.join(KEYS_DIR, "cipher_aes_key.json")
 
-    cipher = {
-        "a": int(data["a"]),
-        "b": int(data["b"])
-    }
+    if not os.path.exists(cipher_path):
+        print("❌ Error: No encrypted AES key found.")
+        print("➡️ Make sure the sender has sent the AES key first.")
+        return 
+
+    try:
+        with open(cipher_path, "r") as f:
+            data = json.load(f)
+
+        cipher = {
+            "a": int(data["a"]),
+            "b": int(data["b"])
+        }
+
+    except (KeyError, ValueError, json.JSONDecodeError):
+        print("❌ Error: Encrypted AES key file is corrupted or invalid.")
+        return None
 
     aes_key = decrypt_aes_key(cipher, private_key)
 
-    with open("session_key.bin", "wb") as f:
+    session_key_path = os.path.join(KEYS_DIR, "session_key.bin")
+
+    with open(session_key_path, "wb") as f:
         f.write(aes_key)
 
     print("✔ Receiver decrypted AES key:", aes_key.hex())
-    print("✔ Session key stored (session_key.bin)")
+    print(f"✔ Session key stored ({session_key_path})")
 
     return aes_key
-
-
-# =========================================================
-# 4️⃣ Messagerie sécurisée avec AES-GCM
-# =========================================================
-
-def secure_message_exchange(message: str):
-    """
-    Chiffrement et déchiffrement d'un message avec AES-GCM
-    """
-    if not os.path.exists("session_key.bin"):
-        raise FileNotFoundError("❌ session_key.bin not found. Run key exchange first.")
-
-    with open("session_key.bin", "rb") as f:
-        aes_key = f.read()
-
-    print("✔ AES session key loaded.")
-
-    plaintext_bytes = message.encode("utf-8")
-
-    encrypted = encrypt_message(aes_key, plaintext_bytes)
-    serialized = serialize_encrypted_message(encrypted)
-
-    print("\n📤 Encrypted message (JSON):")
-    print(serialized)
-
-    received = deserialize_encrypted_message(serialized)
-
-    decrypted = decrypt_message(
-        aes_key,
-        received["nonce"],
-        received["ciphertext"],
-        received["tag"]
-    )
-
-    print("\n📥 Decrypted message:")
-    print(decrypted.decode("utf-8"))
-
-
