@@ -1,38 +1,74 @@
-# Secure File Transfer - Tâche 2.3
+# Documentation : secure_file_transfer.py
 
-Ce module permet de **transférer des fichiers de façon sécurisée** en utilisant :
+## 1. Introduction
 
-- **AES-GCM** pour le chiffrement des fichiers
-- **ElGamal** pour signer les fichiers et garantir leur intégrité
+Le module `secure_file_transfer.py` permet de sécuriser le transfert de fichiers en combinant le chiffrement symétrique AES et la signature asymétrique ElGamal.  
+Il garantit :
+- **Confidentialité** : le contenu du fichier est chiffré avec AES.
+- **Authenticité et intégrité** : le hash du fichier est signé avec ElGamal pour vérifier que le fichier n’a pas été modifié et provient bien de l’expéditeur.
 
-## Fonctions principales
+Ce module est conçu pour fonctionner avec **tout type de fichiers** : texte, image, audio, vidéo, etc.
 
-### envoyer_fichier_secure(aes_key, fichier_path, private_key, public_key_receiver)
-- Chiffre le fichier
-- Génère la signature du fichier
-- Retourne un paquet JSON à envoyer
+---
 
-### recevoir_fichier_secure(aes_key, paquet, public_key_sender, sortie_path)
-- Vérifie la signature
-- Déchiffre le fichier
-- Sauvegarde le fichier original
+## 2. Prérequis
 
-## Exemple d'utilisation
+- Python ≥ 3.10
+- Modules nécessaires :
+  - `aes_module` : fonctions `encrypt_message` et `decrypt_message`
+  - `file_module` : fonctions `encrypt_file`, `decrypt_file`, `save_encrypted_file`, `load_encrypted_file`
+  - `El_gamal_module` : génération de clés ElGamal (`generate_keypair`)
+  - `digital_signature_module` : signature et vérification (`sign`, `verify`)
+
+---
+
+## 3. Fonctionnalités
+
+### 3.1 `secure_file_encrypt`
+- **Description** : chiffre un fichier avec AES et signe son hash avec ElGamal.
+- **Paramètres** :
+  - `infile_path: str` → chemin du fichier à chiffrer
+  - `aes_key: bytes` → clé AES
+  - `sender_private_key: dict` → clé privée pour signer le fichier
+  - `outfile_json: str` → chemin de sortie du fichier JSON
+- **Retour** : chemin du fichier JSON créé
+- **Actions** :
+  1. Chiffrement AES du fichier
+  2. Signature ElGamal du hash
+  3. Sauvegarde dans un fichier JSON
+  4. Affichage du contenu chiffré dans la console
+
+### 3.2 `secure_file_decrypt`
+- **Description** : déchiffre un fichier JSON et vérifie la signature.
+- **Paramètres** :
+  - `infile_json: str` → fichier JSON chiffré
+  - `aes_key: bytes` → clé AES
+  - `sender_public_key: dict` → clé publique pour vérification
+  - `output_path: str` → chemin de sauvegarde du fichier déchiffré
+- **Retour** : `True` si la signature est valide, sinon `False`
+- **Actions** :
+  1. Lecture du JSON
+  2. Extraction et suppression de la signature du JSON
+  3. Déchiffrement AES
+  4. Vérification de la signature
+  5. Sauvegarde du fichier déchiffré
+
+---
+
+## 4. Exemple d’utilisation
 
 ```python
-from src.El_gamal_module import generate_keypair, encrypt_aes_key, decrypt_aes_key
-from src.aes_module import generate_aes_key
-from secure_file_transfer import envoyer_fichier_secure, recevoir_fichier_secure
+from secure_file_transfer import secure_file_encrypt, secure_file_decrypt
+from aes_module import generate_aes_key
+from El_gamal_module import generate_keypair
 
-# Clés de l'expéditeur et du destinataire
-public_sender, private_sender = generate_keypair()
-public_receiver, private_receiver = generate_keypair()
+# Génération des clés
+public_key, private_key = generate_keypair("user_test")
+aes_key = generate_aes_key()
 
-# Clé AES pour la session
-session_key = generate_aes_key()
-encrypted_aes_key = encrypt_aes_key(session_key, public_receiver)
-session_key_receiver = decrypt_aes_key(encrypted_aes_key, private_receiver)
+# Chiffrement
+json_path = secure_file_encrypt("files/exemple.txt", aes_key, private_key, "files/exemple_secure.json")
 
-# Envoi et réception sécurisés
-paquet = envoyer_fichier_secure(session_key, "exemple.pdf", private_sender, public_receiver)
-recevoir_fichier_secure(session_key_receiver, paquet, public_sender, "exemple_dechiffre.pdf")
+# Déchiffrement
+is_valid = secure_file_decrypt(json_path, aes_key, public_key, "files/exemple_decrypted.txt")
+print("Signature valide :", is_valid)
