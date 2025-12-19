@@ -1,0 +1,18 @@
+{
+    "filename": "C:\\Users\\el fah\\Downloads\\test_real_file.txt",
+    "total_chunks": 1,
+    "chunks": [
+        {
+            "nonce": "Q+PF3315+vLr51ZD",
+            "ciphertext": "gIW9x7wVei07QUpYUeYCRTbBAu0huJ1aNi/Z+bFL3TY2DoF7k4qvKr9XDKxpaufx+0PDDMByN3MnNuinFO2YGju3kslitNsOQmHV2LLHvrErvN/a17YvWmD0bTVrjRpvL98yEH6XDybBAj+gAdsv70lXVIioqgu3frO99pyROp7etIHd99oZnkNjKMDJBzwKQhotbpyL0g==",
+            "tag": "Eih0AAnOBMeQDk1Ugf+DOA=="
+        }
+    ],
+    "signature": {
+        "r": 77593030048911213690793504987995738596217314883937741238535003511247086270227,
+        "s": 81350238118685446866648646963860613504961054202241099567643104147484266737541,
+        "hash": "f749c7b1a88de429cad586b35c0c389fb99fc086633d1965a8767d231d5ead6c",
+        "algorithm": "SHA-256",
+        "data_type": "file"
+    }
+}

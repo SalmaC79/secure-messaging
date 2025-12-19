@@ -1,43 +1,66 @@
-import os,sys
-from file_module import encrypt_file, decrypt_file, save_encrypted_file, load_encrypted_file
+# secure_file_transfer.py
 
-from digital_signature_module import sign, verify
+import base64
+import json
+from file_module import encrypt_file, save_encrypted_file, load_encrypted_file, decrypt_file
+from El_gamal_module import generate_keypair
+from digital_signature_module import sign, verify  # fonctions de signature ElGamal
 
-# ----------------------
-# Envoi d'un fichier sécurisé
-# ----------------------
-def envoyer_fichier_secure(infile_path, aes_key, sender_private_key):
+# ---------------------------------------------------
+# Fonction pour chiffrer un fichier et signer
+# ---------------------------------------------------
+def secure_file_encrypt(infile_path: str, aes_key: bytes, sender_private_key: dict, outfile_json: str) -> str:
     """
-    Chiffre un fichier avec AES et signe le hash.
-    Retourne un paquet dict {fichier_chiffre, signature}
+    Chiffre le fichier avec AES et signe le hash avec ElGamal.
+    Sauvegarde le tout dans un fichier JSON.
+    Affiche le contenu chiffré.
     """
-    # 1️⃣ Chiffrer le fichier
-    enc_dict = encrypt_file(aes_key, infile_path)
+    try:
+        # 1️⃣ Chiffrement AES
+        enc_dict = encrypt_file(aes_key, infile_path)
 
-    # 2️⃣ Signer le hash du fichier original
-    signature = sign(infile_path, sender_private_key, data_type="file")
+        # 2️⃣ Signature ElGamal du hash du fichier original
+        signature = sign(infile_path, sender_private_key, data_type="file")
 
-    # 3️⃣ Créer le paquet à envoyer
-    paquet = {
-        "fichier_chiffre": enc_dict,
-        "signature": signature
-    }
+        # 3️⃣ Ajouter signature dans le JSON
+        enc_dict["signature"] = signature
 
-    return paquet
+        # 4️⃣ Sauvegarder JSON
+        save_encrypted_file(enc_dict, outfile_json)
 
-# ----------------------
-# Réception d'un fichier sécurisé
-# ----------------------
-def recevoir_fichier_secure(aes_key, paquet, sender_public_key, output_path):
+        # 5️⃣ Afficher le contenu chiffré dans la console
+        print("\n🔒 Contenu chiffré (JSON) :")
+        print(json.dumps(enc_dict, indent=4))
+
+        return outfile_json
+    except Exception as e:
+        raise RuntimeError(f"Erreur dans secure_file_encrypt: {e}")
+
+
+# ---------------------------------------------------
+# Fonction pour déchiffrer un fichier et vérifier la signature
+# ---------------------------------------------------
+def secure_file_decrypt(infile_json: str, aes_key: bytes, sender_public_key: dict, output_path: str) -> bool:
     """
-    Déchiffre un fichier et vérifie la signature.
+    Déchiffre le fichier JSON et vérifie la signature avec la clé publique.
+    Sauvegarde le fichier déchiffré.
+    Retourne True si la signature est valide, False sinon.
     """
-    enc_dict = paquet["fichier_chiffre"]
-    signature = paquet["signature"]
+    try:
+        # 1️⃣ Charger JSON
+        enc_dict = load_encrypted_file(infile_json)
 
-    # 1️⃣ Déchiffrer le fichier
-    decrypt_file(aes_key, enc_dict, output_path)
+        # 2️⃣ Extraire la signature
+        signature = enc_dict.pop("signature", None)
+        if signature is None:
+            raise ValueError("Aucune signature trouvée dans le JSON")
 
-    # 2️⃣ Vérifier la signature sur le fichier déchiffré
-    if not verify(output_path, signature, sender_public_key, data_type="file"):
-        raise ValueError("Signature invalide ! Le fichier peut avoir été altéré.")
+        # 3️⃣ Déchiffrement AES
+        decrypt_file(aes_key, enc_dict, output_path)
+
+        # 4️⃣ Vérification de la signature
+        valid = verify(output_path, signature, sender_public_key, data_type="file")
+
+        return valid
+    except Exception as e:
+        raise RuntimeError(f"Erreur dans secure_file_decrypt: {e}")
