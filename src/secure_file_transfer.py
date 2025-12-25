@@ -1,4 +1,6 @@
-# secure_file_transfer.py
+from colorama import init, Fore, Back, Style
+
+init(autoreset=True)
 
 import base64
 import json
@@ -29,7 +31,7 @@ def secure_file_encrypt(infile_path: str, aes_key: bytes, sender_private_key: di
         save_encrypted_file(enc_dict, outfile_json)
 
         # 5️⃣ Afficher le contenu chiffré dans la console
-        print("\n🔒 File est chiffré !")
+        print(Style.BRIGHT +"\n🔒 File est chiffré !")
         # print(json.dumps(enc_dict, indent=4))
 
         return outfile_json

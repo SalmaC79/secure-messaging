@@ -32,7 +32,7 @@ def test_secure_messaging():
     # 4️⃣ Receiver déchiffre la clé AES
     # -----------------------------
     recovered_aes = decrypt_aes_key(cipher, private)
-    print("Receiver decrypted AES key:", recovered_aes.hex())
+    #print("Receiver decrypted AES key:", recovered_aes.hex())
 
     # Vérification clé AES
     assert recovered_aes == aes_key, " AES keys do not match!"

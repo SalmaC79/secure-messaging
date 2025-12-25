@@ -1,6 +1,8 @@
 import os
 import sys
 import json
+from colorama import init, Fore, Back, Style
+init(autoreset=True)
 
 # Accès aux modules dans src/
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
@@ -26,7 +28,7 @@ def setupkeysElgamal(user_prefix):
     Génère (si nécessaire) les clés ElGamal du receiver
     """
     public, private = generate_keypair(user_prefix)
-    print("✔ Receiver is ready (ElGamal keys available).")
+    #print(Style.DIM +"✔ Receiver is ready (ElGamal keys available).")
     return public, private
 
 
@@ -44,7 +46,7 @@ def sender_send_session_key(receiver_prefix):
     public_key, _ = load_keys(receiver_prefix)
 
     aes_key = generate_aes_key()
-    print("✔ Sender generated AES session key .")
+    print(Style.DIM +"✔ Sender generated AES session key .")
 
     cipher = encrypt_aes_key(aes_key, public_key)
 
@@ -73,8 +75,8 @@ def receiver_receive_session_key(receiver_prefix):
     cipher_path = os.path.join(KEYS_DIR, "cipher_aes_key.json")
 
     if not os.path.exists(cipher_path):
-        print("❌ Error: No encrypted AES key found.")
-        print("➡️ Make sure the sender has sent the AES key first.")
+        print(Fore.RED + "\n❌ Error: No encrypted AES key found.")
+        print(" Make sure the sender has sent the AES key first.")
         return 
 
     try:
@@ -97,7 +99,7 @@ def receiver_receive_session_key(receiver_prefix):
     with open(session_key_path, "wb") as f:
         f.write(aes_key)
 
-    print("✔ Receiver decrypted AES key:", aes_key.hex())
-    print(f"✔ Session key stored ({session_key_path})")
+    #print("✔ Receiver decrypted AES key:", aes_key.hex())
+    print(Style.DIM +f"✔ Session key stored ({session_key_path})")
 
     return aes_key

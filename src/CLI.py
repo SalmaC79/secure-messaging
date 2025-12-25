@@ -47,10 +47,10 @@ def send_message(sender, receiver, aes_key):
     with open(filepath, "w") as f:
         json.dump(package, f, indent=4)
 
-    print(f"✔ Message encrypted and saved: {filename}")
+    print(Style.DIM+f"✔ Message encrypted and saved: {filename}")
 
 def read_messages(user, aes_key):
-    print(Fore.MAGENTA + Style.BRIGHT + f"\n📬 Messages for {user}:")
+    print(Style.BRIGHT + f"\n📬 Messages for {user}:")
 
     msgs = [
         f for f in os.listdir(MESSAGES_DIR)
@@ -58,7 +58,7 @@ def read_messages(user, aes_key):
     ]
 
     if not msgs:
-        print("No messages found.")
+        print(Fore.YELLOW + Style.DIM+"No messages found.")
         return
 
     for filename in sorted(msgs):
@@ -77,8 +77,9 @@ def read_messages(user, aes_key):
                 sender_public_key
             )
 
-            print(f"\nFrom {sender}:\n{plaintext}")
-            print("✔ Valid signature" if valid else "❌ Invalid signature")
+            print(Style.BRIGHT +f"\nFrom {sender} :\n")
+            print(plaintext)
+            print(Fore.GREEN +"✔ Valid signature" if valid else Fore.RED +"\n❌ Invalid signature")
 
             # 🔥 DELETE AFTER SUCCESSFUL READ
             os.remove(filepath)
@@ -111,7 +112,7 @@ def choose_user():
 
 def choose_aes_key_source(me, peer):
     while True:
-        print(Fore.MAGENTA + Style.BRIGHT +"AES key option:")
+        print(Fore.MAGENTA + Style.BRIGHT +"\n\nAES key option:")
         print("1) Generate and send AES key")
         print("2) Receive AES key")
 
@@ -119,7 +120,7 @@ def choose_aes_key_source(me, peer):
 
         if choice == "1":
             aes_key = sender_send_session_key(peer)
-            print(f"✔ AES key sent to {peer}")
+            print(Style.DIM +f"✔ AES key sent to {peer}")
             return aes_key
 
         elif choice == "2":
@@ -127,7 +128,7 @@ def choose_aes_key_source(me, peer):
             if aes_key is None:
                 print("↩ No AES key yet. Try again.\n")
                 continue
-            print("✔ AES key received.")
+            print(Style.DIM +"✔ AES key received.")
             return aes_key
 
         else:
@@ -157,12 +158,12 @@ def clear_directory(dir_path):
 
 def messaging_cli(me, peer, aes_key):
     while True:
-        print(Fore.MAGENTA + Style.BRIGHT +"\nChoose an option:")
+        print(Fore.MAGENTA + Style.BRIGHT +"\n\nChoose an option:")
         print("1) Send a message")
         print("2) Read received messages")
         print("3) Send a file")
         print("4) Read received files")
-        print("5) Exit")
+        print(Fore.RED +"5) Exit")
 
         choice = input("> ")
 
@@ -180,14 +181,14 @@ def messaging_cli(me, peer, aes_key):
 
 
         elif choice == "5":
-            print("🧹 Clearing keys and messages...")
+            print(Style.BRIGHT +"\n🧹 Clearing keys and messages...")
 
             clear_directory(KEYS_DIR)
             clear_directory(FILES_DIR)
             clear_directory(MESSAGES_DIR)
 
             print("✔ keys/ and messages/ cleared.")
-            print("Exiting.")
+            print(Fore.RED +"Exiting.")
             break
 
         else:
@@ -223,19 +224,19 @@ def send_file(sender, receiver, aes_key):
 
     try:
         secure_file_encrypt(infile_path, aes_key, sender_private, outfile_json)
-        print(f"✔ File encrypted and saved: {outfile_json}")
+        print(Style.DIM +f"✔ File encrypted and saved: {outfile_json}")
     except Exception as e:
         print(f"❌ Failed to send file: {e}")
 
 def read_files(user, aes_key):
-    print(f"\n📂 Files for {user}:")
+    print(Style.BRIGHT +f"\n📂 Files for {user}:")
     files = [
         f for f in os.listdir(FILES_DIR)
         if f.startswith(f"{user}_from_")
     ]
 
     if not files:
-        print("No files found.")
+        print(Fore.YELLOW + Style.DIM+"No files found.")
         return
 
     for filename in sorted(files):
@@ -252,8 +253,8 @@ def read_files(user, aes_key):
 
         try:
             valid = secure_file_decrypt(filepath, aes_key, sender_public, output_path)
-            print(f"✔ File saved as: {output_path}")
-            print("✔ Valid signature" if valid else "❌ Invalid signature")
+            print(f"\n✔ File saved as: {output_path}")
+            print(Fore.GREEN +"✔ Valid signature" if valid else Fore.RED +"❌ Invalid signature")
 
             # 🔥 DELETE AFTER SUCCESSFUL READ
             os.remove(filepath)
@@ -269,8 +270,8 @@ def main():
     me = choose_user()
     peer = "userB" if me == "userA" else "userA"
 
-    print(f"\n🧍 This terminal is: {me}")
-    print(f"🧍 Other terminal: {peer}\n")
+    print(Fore.BLUE +f"\n🧍 This terminal is: {me}")
+    print(Fore.BLUE +f"🧍 Other terminal: {peer}\n")
     my_public, my_private = setupkeysElgamal(me)
 
 

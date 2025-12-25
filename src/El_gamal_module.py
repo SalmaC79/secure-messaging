@@ -2,9 +2,11 @@ from Crypto.PublicKey import ElGamal
 from Crypto import Random
 from Crypto.Random import random
 from Crypto.Util.number import bytes_to_long, long_to_bytes
+from colorama import init, Fore, Back, Style
 import json
 import os
 
+init(autoreset=True)
 KEYS_DIR = "keys"
 
 
@@ -45,10 +47,10 @@ def generate_keypair(prefix, bits=256):
     os.makedirs(KEYS_DIR, exist_ok=True)
 
     if keys_exist(prefix):
-        print(f"✔ Keys already exist for user '{prefix}'. Loading keys.")
+        #print(Style.DIM +f"✔ Keys already exist for user '{prefix}'. Loading keys.")
         return load_keys(prefix)
 
-    print(f"🔐 Generating ElGamal keys for user '{prefix}'...")
+    print(Style.BRIGHT+f"\n🔐 Generating ElGamal keys for user '{prefix}'...")
 
     key = ElGamal.generate(bits, Random.get_random_bytes)
 
@@ -65,7 +67,7 @@ def generate_keypair(prefix, bits=256):
     }
 
     save_keys(prefix, public, private)
-    print(f"✔ Keys generated and saved for user '{prefix}'")
+    print(Style.DIM +f"✔ Keys generated and saved for user '{prefix}'")
 
     return public, private
 
