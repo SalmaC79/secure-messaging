@@ -29,8 +29,8 @@ def secure_file_encrypt(infile_path: str, aes_key: bytes, sender_private_key: di
         save_encrypted_file(enc_dict, outfile_json)
 
         # 5️⃣ Afficher le contenu chiffré dans la console
-        print("\n🔒 Contenu chiffré (JSON) :")
-        print(json.dumps(enc_dict, indent=4))
+        print("\n🔒 File est chiffré !")
+        # print(json.dumps(enc_dict, indent=4))
 
         return outfile_json
     except Exception as e:
@@ -56,6 +56,7 @@ def secure_file_decrypt(infile_json: str, aes_key: bytes, sender_public_key: dic
             raise ValueError("Aucune signature trouvée dans le JSON")
 
         # 3️⃣ Déchiffrement AES
+
         decrypt_file(aes_key, enc_dict, output_path)
 
         # 4️⃣ Vérification de la signature

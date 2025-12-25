@@ -1,3 +1,0 @@
-Bonjour Nada,
-Ceci est un vrai test de chiffrement de fichier sécurisé.
-Si ce fichier revient identique après déchiffrement, alors tout marche.

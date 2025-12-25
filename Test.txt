@@ -1,1 +1,0 @@
-sous Kali Linux (Debian-based), le module recommandé pour limiter les tentatives d’authentification n'est plus pam_tally2, mais pam_faillock (comme sur RedHat, mais Debian l’a aussi intégré récemment).
