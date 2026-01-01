@@ -60,7 +60,11 @@ Clone this repository:
 git clone https://github.com/yourusername/secure-messaging.git
 cd secure-messaging
 ```
+Then run this command :
 
+```bash
+ pip install -r requirements.txt 
+```
 ---
 
 ## Usage
