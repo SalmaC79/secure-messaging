@@ -35,7 +35,6 @@ A **Python-based secure messaging application** featuring end-to-end encryption,
 
 ## Demo
 
-![Messenger Screenshot](./screenshots/demo.png)
 <img width="1600" height="838" alt="image" src="https://github.com/user-attachments/assets/50a1cf89-c151-4046-9582-46b5ec80faea" />
 
 
