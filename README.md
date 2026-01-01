@@ -45,15 +45,6 @@ A **Python-based secure messaging application** featuring end-to-end encryption,
 
 ### Requirements
 
-* Python 3.11+
-* PyQt6
-* `pyaudio`
-* `wave`
-
-```bash
-pip install PyQt6 pyaudio
-```
-
 Clone this repository:
 
 ```bash
@@ -69,34 +60,34 @@ Then run this command :
 
 ## Usage
 
-Run the application:
+Run the application in two split terminals, each command in a terminal:
+
+--> User A terminal :
 
 ```bash
  python interface.py userA
+```
+--> User B terminal :
+
+```bash
  python interface.py userB
 ```
-
-**Features in action:**
-
-1. **Start a new conversation**: Enter your username and your peer's username.
-2. **Send text messages**: Type in the input box and press "Send".
-3. **Send files**: Click the "Attach" button and select a file.
-4. **Record audio**: Press the microphone icon to record and send.
-5. **React to messages**: Click on a message and add an emoji reaction.
-
 ---
 
 ## Project Structure
 
 ```
-secure-messenger/
-│
-├─ interface.py        # Main GUI application
-├─ backgrounds/        # Customizable background images
-├─ icons/              # Icons used in GUI
-├─ models/             # Optional ML/audio models
-├─ README.md           # This file
-└─ history/            # Chat histories saved as JSON
+.
+├── Readme files/ #for each module, we produced a readme file
+├── Test/
+├── Test_files/
+├── src/
+│   ├── GUI
+│   └── CLI functions #the modules of our project and the cli
+├── tests/ #our modules tests
+├── venv/
+├── .gitignore
+└── requirements.txt
 ```
 
 ---
@@ -105,7 +96,8 @@ secure-messenger/
 
 * **Python 3.11** – Core language
 * **PyQt6** – Graphical user interface
-* **AES & RSA (simulated)** – Message encryption and key exchange
+* **AES & RSA (via PyCryptodome)** – Message encryption and key exchange
+* **hashlib** – Hashing for message integrity and signatures
 * **Wave & PyAudio** – Audio recording and playback
 * **JSON** – Local message history storage
 
