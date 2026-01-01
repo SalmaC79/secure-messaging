@@ -1,6 +1,6 @@
 pycryptodome
 hashlib 
 Cryptodome
-#lli bgha y installi hadchi kaml, y runni had la commande : pip install -r requirements.txt
+
 alias r="/home/nezha-halla/Documents/IRSI2Year/Cryptographie/TPs/Project/venv/bin/python /home/nezha-halla/Documents/IRSI2Year/Cryptographie/TPs/Project/src/CLI.py"
 alias c=clear
