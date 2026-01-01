@@ -7,6 +7,7 @@ from Crypto.PublicKey import ElGamal
 from Crypto.Random.random import randint
 
 
+
 def sign(data, private_key, data_type=None, algorithm="SHA-256"):
     # --- Auto-detect type ---
     if data_type is None:
