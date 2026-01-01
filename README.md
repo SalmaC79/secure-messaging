@@ -1,6 +1,6 @@
 ---
 
-# Secure Messenger - ~VaultTalk~ 🛡️✉️
+# Secure Messenger - _VaultTalk_ 🛡️✉️
 
 A **Python-based secure messaging application** featuring end-to-end encryption, file and audio sharing, and a modern PyQt6 GUI. Designed for educational and practical purposes in **cybersecurity and networking**, this project demonstrates cryptography integration with real-time messaging.
 
