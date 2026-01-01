@@ -1,6 +1,5 @@
 pycryptodome
-hashlib 
-Cryptodome
-
-alias r="/home/nezha-halla/Documents/IRSI2Year/Cryptographie/TPs/Project/venv/bin/python /home/nezha-halla/Documents/IRSI2Year/Cryptographie/TPs/Project/src/CLI.py"
-alias c=clear
+colorama
+PyQt6
+pyaudio
+# pip install -r requirements.txt to use this file actually 
